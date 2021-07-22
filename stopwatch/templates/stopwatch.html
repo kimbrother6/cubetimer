@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>word</title>
+    <link rel="stylesheet" href="{% static 'stopwatch.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div id="stopwatch">0.00</div>
+    
+    <script src="{% static 'stopwatch.js' %}"></script>
+  </body>
+</html>
