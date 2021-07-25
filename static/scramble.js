@@ -56,11 +56,13 @@ var cube = {
       return moves;
   }
 };
-
+let scramble;
 window.addEventListener("load", function () {
   function displayScramble() {
       cube.reset();
-      var i, scramble = cube.scramble(), len = scramble.length, result = "";
+      scramble = cube.scramble()
+      var i, len = scramble.length, result = "";
+      
       for (i = 0; i < len; i += 5) {
           // Only allow a line break every 5 moves
           result += scramble.slice(i, i + 5).join("&nbsp;") + " ";
@@ -69,5 +71,6 @@ window.addEventListener("load", function () {
   }
   displayScramble();
   document.getElementById("btn-refresh").addEventListener("click", displayScramble);
-  
 });
+
+export {scramble}

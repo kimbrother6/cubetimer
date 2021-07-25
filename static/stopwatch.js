@@ -1,11 +1,44 @@
+//scramble.js에서 배열 형태로 스크램블을 받아옴. 하지만 타이머를 시작 했을때의 스크램블이 아니라 그 다음 스크램블이 넘어옴. 그래서 
+import { scramble as scrambleList } from '/static/scramble.js'
+let scramble = "";
+let scrambleRecord = [];
+
+//처음 로드 했을 때 스크램블을 저장
+setTimeout(() => {
+  for (let i of scrambleList) {
+    scramble += `${i} `
+  }
+  scrambleRecord.push(scramble)
+  scramble = ""
+}, 200)
+
 let stopwatch = {
   stopwatchHTML: document.getElementById('stopwatch'),
   stoptime: true,
   textColor: '',
-  
+
 
   // 타이머를 멈춘후 바로 타이머가 실핼되지 않게 하기 위한 변수
   canTimerStart: true,
+
+  //이번 스크램블을 저장하고, 이전 스크램블을(타이머 스탑 하기전에 스크램블) 리턴
+  returnScramble: function () {
+    for (let i of scrambleList) {
+      scramble += `${i} `
+    }
+    scrambleRecord.push(scramble)
+    if (scrambleRecord.length > 3) {
+      scrambleRecord.shift()
+    }
+
+    if (scrambleRecord.length === 1) {
+      return scramble
+    } else if (scrambleRecord.length === 2) {
+      return scrambleRecord[0]
+    } else if (scrambleRecord.length === 3) {
+      return scrambleRecord[1]
+    }
+  },
 
   timer: {
     tenMs: 0,
@@ -22,7 +55,6 @@ let stopwatch = {
 
       //color
       stopwatch.textColor = "white";
-
     },
 
     stopTimer: function () {
@@ -36,12 +68,15 @@ let stopwatch = {
         stopwatch.textColor = "red";
         stopwatch.timer.solveing_time = stopwatch.timer.sec + '.' + stopwatch.timer.hundredMs + stopwatch.timer.tenMs;
         stopwatch.stopwatchHTML.innerHTML = stopwatch.timer.solveing_time;
-        
-        scramble = $('#scramble').text()
+
+        // scramble = $('#scramble').text()
         $('#btn-refresh').click()
 
+        let uploadScramble = stopwatch.returnScramble()
+        solveing_save(stopwatch.timer.solveing_time, uploadScramble)
+        scramble = "";
 
-        solveing_save(stopwatch.timer.solveing_time, scramble)
+
       }
     },
 
@@ -76,7 +111,7 @@ let stopwatch = {
           stopwatch.stopwatchHTML.innerHTML = stopwatch.timer.sec + '.' + stopwatch.timer.hundredMs;
         }
 
-        setTimeout("stopwatch.timer.timerCycle()", 10);
+        setTimeout(() => { stopwatch.timer.timerCycle() }, 10);
       }
     },
 
@@ -98,15 +133,15 @@ let stopwatch = {
       //타이머가 멈춘후 스페이스바를 누르면 타이머 리셋
       let keyup = event.type === 'keyup';
       let keydown = event.type === 'keydown';
-    
+
       let keySpace = event.key === ' ';
-    
+
       if (keydown && keySpace) {
         stopwatch.keyevent.keydownSpace()
       } else if (keyup && keySpace) {
         stopwatch.keyevent.keyupSpace()
       }
-    
+
       stopwatch.color()
     },
 
@@ -119,7 +154,7 @@ let stopwatch = {
         stopwatch.timer.stopTimer()
       }
     },
-    
+
     keyupSpace: function () {
       if (stopwatch.canTimerStart === false) {
         stopwatch.canTimerStart = true
@@ -145,7 +180,7 @@ let stopwatch = {
 document.addEventListener('keydown', stopwatch.keyevent.keyboardevent);
 document.addEventListener('keyup', stopwatch.keyevent.keyboardevent);
 
-function post(params, method='post') {
+function post(params, method = 'post') {
   console.log('post함수 호출됨')
   // The rest of this code assumes you are not using a library.
   // It can be made less verbose if you use one.
@@ -157,7 +192,7 @@ function post(params, method='post') {
       const hiddenField = document.getElementById('solveing_time');
       hiddenField.name = 'solveing_time';
 
-      console.log(typeof(params[key]))
+      console.log(typeof (params[key]))
       hiddenField.value = params[key];
 
       console.log(hiddenField.name)
@@ -186,7 +221,7 @@ function solveing_save(solveing_time, scramble) {
       scramble: scramble,
     },
     dataType: 'json',
-    headers: { "X-CSRFToken": "{{ csrf_token }}" },
+    // headers: { "X-CSRFToken": "{{ csrf_token }}" },
     error: function (request, status, error) {
       alert('통신실패 error:' + error)
     }
