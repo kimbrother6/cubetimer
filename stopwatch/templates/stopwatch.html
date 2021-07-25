@@ -8,10 +8,32 @@
     <title>word</title>
     <link rel="stylesheet" href="{% static 'stopwatch.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    {% comment %} <script type="module" defer>
+      import "https://cdn.cubing.net/js/scramble-display";
+      import { Alg } from "https://cdn.cubing.net/js/cubing/alg";
+
+      // Invert the scramble when you click the display.
+      const disp = document.querySelector("#disp");
+      disp.addEventListener("click", () => {
+        disp.scramble = Alg.fromString(disp.scramble).invert().toString();
+      });
+    </script> {% endcomment %}
   </head>
   <body>
+    <div id="scramble-navbar">
+      <div id='scramble'></div>
+      <button id="btn-refresh">다음</button>
+    </div>
     <div id="stopwatch">0.00</div>
-    
+    <script src="{% static 'scramble.js' %}"></script>
     <script src="{% static 'stopwatch.js' %}"></script>
+
+    
+
+    
+
+<!--스크램블 디스플래이 하는 것, 하지만 스크램블이 자바스크립트에서 넘어올 떄 암호화되어 넘어오기 때문에 표시가 안됨. 자바스크립트를 모델화해서 export, import를 잘 하면 될 것 같은데 잘 안된다...-->
+{% comment %} <scramble-display id="disp"></scramble-display> {% endcomment %}
+
   </body>
 </html>

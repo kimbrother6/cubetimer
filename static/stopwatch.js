@@ -2,6 +2,7 @@ let stopwatch = {
   stopwatchHTML: document.getElementById('stopwatch'),
   stoptime: true,
   textColor: '',
+  
 
   // 타이머를 멈춘후 바로 타이머가 실핼되지 않게 하기 위한 변수
   canTimerStart: true,
@@ -11,6 +12,7 @@ let stopwatch = {
     hundredMs: 0,
     sec: 0,
     min: 0,
+    solveing_time: '',
 
     startTimer: function () {
       if (stopwatch.stoptime == true) {
@@ -32,8 +34,14 @@ let stopwatch = {
 
         //color
         stopwatch.textColor = "red";
+        stopwatch.timer.solveing_time = stopwatch.timer.sec + '.' + stopwatch.timer.hundredMs + stopwatch.timer.tenMs;
+        stopwatch.stopwatchHTML.innerHTML = stopwatch.timer.solveing_time;
+        
+        scramble = $('#scramble').text()
+        $('#btn-refresh').click()
 
-        stopwatch.stopwatchHTML.innerHTML = stopwatch.timer.sec + '.' + stopwatch.timer.hundredMs + stopwatch.timer.tenMs;
+
+        solveing_save(stopwatch.timer.solveing_time, scramble)
       }
     },
 
@@ -136,3 +144,51 @@ let stopwatch = {
 
 document.addEventListener('keydown', stopwatch.keyevent.keyboardevent);
 document.addEventListener('keyup', stopwatch.keyevent.keyboardevent);
+
+function post(params, method='post') {
+  console.log('post함수 호출됨')
+  // The rest of this code assumes you are not using a library.
+  // It can be made less verbose if you use one.
+  const form = document.getElementById('solveing_time_form');
+  form.method = method;
+
+  for (const key in params) {
+    if (params.hasOwnProperty(key)) {
+      const hiddenField = document.getElementById('solveing_time');
+      hiddenField.name = 'solveing_time';
+
+      console.log(typeof(params[key]))
+      hiddenField.value = params[key];
+
+      console.log(hiddenField.name)
+
+      form.appendChild(hiddenField);
+
+      console.log(stopwatch.canTimerStart)
+
+      // const btn = document.createElement('input');
+      // btn.type = 'submit';
+      // btn.value = '전송';
+      // form.appendChild(btn);
+    }
+  }
+
+  document.body.appendChild(form);
+  // console.log('submit')
+  form.submit();
+}
+
+function solveing_save(solveing_time, scramble) {
+  $.ajax({
+    url: 'create_solve/',
+    data: {
+      solveing_time: solveing_time,
+      scramble: scramble,
+    },
+    dataType: 'json',
+    headers: { "X-CSRFToken": "{{ csrf_token }}" },
+    error: function (request, status, error) {
+      alert('통신실패 error:' + error)
+    }
+  })
+}

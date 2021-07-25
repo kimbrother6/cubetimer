@@ -9,3 +9,7 @@ body {
   left: 50%;
   transform: translate(-50%, -55%);
 }
+
+#scramble-navbar {
+  text-align: center;
+}
